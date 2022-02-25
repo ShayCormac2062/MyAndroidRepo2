@@ -2,5 +2,6 @@
 <project version="4">
   <component name="DetektProjectConfiguration">
     <enableDetekt>true</enableDetekt>
+    <configPaths>C:\Users\Bashir\AndroidStudioProjects\MyAndroidRepo2\config\detekt\detekt.yml</configPaths>
   </component>
 </project>

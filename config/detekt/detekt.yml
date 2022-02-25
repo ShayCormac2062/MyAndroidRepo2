@@ -116,7 +116,7 @@ complexity:
 coroutines:
   active: true
   GlobalCoroutineUsage:
-    active: false
+    active: true
   RedundantSuspendModifier:
     active: false
 

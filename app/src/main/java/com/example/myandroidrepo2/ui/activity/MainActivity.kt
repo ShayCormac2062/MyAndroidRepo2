@@ -15,7 +15,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.container, MainFragment())
+            .replace(R.id.container, MainFragment(null))
+            .addToBackStack(null)
             .commit()
     }
 }
