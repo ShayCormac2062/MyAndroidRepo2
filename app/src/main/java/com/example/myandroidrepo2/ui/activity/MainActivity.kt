@@ -5,6 +5,7 @@ import android.os.Bundle
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.ActivityMainBinding
 import com.example.myandroidrepo2.ui.fragment.MainFragment
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_sunset"
+    android:background="@drawable/gradient_night"
     tools:context=".ui.fragment.MainFragment">
 
     <ScrollView
@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/tv_city"
                 style="@style/TextStyle.TextStyleForTitles"
                 android:layout_width="match_parent"
@@ -33,7 +33,6 @@
                 android:layout_width="40dp"
                 android:layout_height="40dp"
                 android:src="@drawable/search"
-                android:background="@color/teal_200"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="24dp"
@@ -62,6 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="90sp"
+                android:layout_marginTop="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
@@ -99,8 +99,7 @@
                 android:id="@+id/iv_wind"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/teal_200"
+                android:layout_marginTop="52dp"
                 android:src="@drawable/wind"
                 app:layout_constraintEnd_toStartOf="@+id/iv_humidity"
                 app:layout_constraintStart_toStartOf="parent"
@@ -110,8 +109,7 @@
                 android:id="@+id/iv_humidity"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/teal_200"
+                android:layout_marginTop="52dp"
                 android:src="@drawable/humidity"
                 app:layout_constraintEnd_toStartOf="@+id/iv_pressure"
                 app:layout_constraintStart_toEndOf="@+id/iv_wind"
@@ -121,8 +119,7 @@
                 android:id="@+id/iv_pressure"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/teal_200"
+                android:layout_marginTop="52dp"
                 android:src="@drawable/pressure"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/iv_humidity"
@@ -166,6 +163,7 @@
                 style="@style/TextStyle.ExtensionTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="@+id/tv_wind"
                 app:layout_constraintStart_toStartOf="@+id/tv_wind"
                 app:layout_constraintTop_toBottomOf="@+id/tv_wind" />
@@ -175,6 +173,7 @@
                 style="@style/TextStyle.ExtensionTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="@+id/tv_humidity"
                 app:layout_constraintStart_toStartOf="@+id/tv_humidity"
                 app:layout_constraintTop_toBottomOf="@+id/tv_wind" />
@@ -185,6 +184,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:layout_constraintEnd_toEndOf="@+id/tv_pressure"
+                android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_pressure"
                 app:layout_constraintTop_toBottomOf="@+id/tv_wind" />
 
@@ -193,15 +193,25 @@
                 android:id="@+id/extensions"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="12dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="32dp"
                 android:alpha=".4"
                 app:cardCornerRadius="12dp"
+                android:backgroundTint="@color/blue_dark"
                 app:layout_constraintTop_toBottomOf="@+id/tv_humidity_result">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tv_extensions"
+                        style="@style/TextStyle.TextStyleForTitles"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toTopOf="@+id/tv_clouds"
+                        android:text="@string/extensions"/>
 
                     <TextView
                         android:id="@+id/tv_clouds"
@@ -212,7 +222,8 @@
                         app:layout_constraintEnd_toStartOf="@+id/tv_clouds_result"
                         app:layout_constraintHorizontal_chainStyle="packed"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@id/tv_extensions"
+                        android:layout_marginTop="54dp"/>
 
                     <TextView
                         android:id="@+id/tv_clouds_result"
@@ -220,9 +231,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
+                        android:layout_marginTop="54dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_clouds"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toBottomOf="@+id/tv_extensions" />
 
                     <TextView
                         android:id="@+id/tv_sunrise"

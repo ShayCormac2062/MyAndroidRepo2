@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TextStyle">
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="fontFamily">@font/etna</item>
+        <item name="android:textColor">@color/white</item>
+
+    </style>
+
+    <style name="TextStyle.TextStyleForTitles">
+        <item name="android:layout_marginTop">16dp</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="TextStyle.ExtensionTextStyle">
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:textSize">17sp</item>
+    </style>
+</resources>

@@ -2,16 +2,21 @@ package com.example.myandroidrepo2.ui.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.PorterDuff
 import android.location.Location
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import coil.load
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentMainBinding
 import com.example.myandroidrepo2.entity.WeatherDetail
@@ -43,7 +48,6 @@ class MainFragment(private var city: String?) : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var weather: WeatherDetail?
-        changeDay()
         parentFragmentManager.beginTransaction()
             .add(R.id.container, LoadingFragment(idBackground))
             .addToBackStack(null)
@@ -51,19 +55,21 @@ class MainFragment(private var city: String?) : Fragment() {
         setupLocation()
         lifecycleScope.launch {
             weather = if (city != null) {
-               repository.getWeather(city.toString())
+                repository.getWeather(city.toString())
             } else {
                 if (longitude == null) {
                     city = "Kazan"
                     repository.getWeather("Kazan")
-                }
-                else repository.getWeatherWithLocation(longitude, latitude)
+                } else repository.getWeatherWithLocation(longitude, latitude)
             }
             setupWeatherDetails(weather)
         }
         binding?.btnSearchCity?.setOnClickListener {
             parentFragmentManager.beginTransaction()
-                .replace(R.id.container, SearchCityFragment(longitude, latitude, idBackground, repository))
+                .replace(
+                    R.id.container,
+                    SearchCityFragment(longitude, latitude, idBackground, repository)
+                )
                 .addToBackStack(null)
                 .commit()
         }
@@ -74,7 +80,7 @@ class MainFragment(private var city: String?) : Fragment() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        when(requestCode) {
+        when (requestCode) {
             100 -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setupLocation()
@@ -88,25 +94,6 @@ class MainFragment(private var city: String?) : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
-    }
-
-    private fun changeDay() {
-        val calendar = Calendar.getInstance()
-        val hour = calendar.get(Calendar.HOUR_OF_DAY)
-        binding?.run {
-            idBackground = when {
-                (hour in (6..11)) -> R.drawable.gradient_morning
-                (hour in (12..17)) -> R.drawable.gradient_day
-                (hour in (18..21)) -> R.drawable.gradient_sunset
-                else -> R.drawable.gradient_night
-            }.apply {
-                root.setBackgroundResource(this)
-                extensions.setBackgroundResource(this)
-            }
-            tvCity.text = city
-            tvCalendar.text = "${calendar[Calendar.DAY_OF_MONTH]}, " +
-                "${setMonth(calendar[Calendar.MONTH])} ${calendar[Calendar.YEAR]}"
-        }
     }
 
     private fun setMonth(i: Int): String =
@@ -129,6 +116,8 @@ class MainFragment(private var city: String?) : Fragment() {
         val calendar = Calendar.getInstance()
         data?.let { detail ->
             binding?.run {
+                tvCalendar.text = "${calendar[Calendar.DAY_OF_MONTH]}, " +
+                    "${setMonth(calendar[Calendar.MONTH])} ${calendar[Calendar.YEAR]}"
                 tvCity.text = city
                 tvTemperature.text = "${detail.main.temp.toInt()}°C"
                 tvDescription.text = detail.weather[0].description
@@ -143,6 +132,9 @@ class MainFragment(private var city: String?) : Fragment() {
                 calendar.timeInMillis = detail.sys.sunset.toLong()
                 tvSunsetResult.text = setHour(calendar, 1)
                 tvDirectionResult.text = setDirection(detail.wind.deg)
+                val uri: Uri =
+                    Uri.parse("https://openweathermap.org/img/wn/${detail.weather[0].icon}@2x.png")
+                ivDescription.load(uri)
             }
             parentFragmentManager.popBackStack()
         }
@@ -162,7 +154,8 @@ class MainFragment(private var city: String?) : Fragment() {
         }
 
     private fun setHour(calendar: Calendar, check: Int): String {
-        val hour: Int = if (check == 1) calendar[Calendar.HOUR_OF_DAY] + 12 else calendar[Calendar.HOUR_OF_DAY]
+        val hour: Int =
+            if (check == 1) calendar[Calendar.HOUR_OF_DAY] + 12 else calendar[Calendar.HOUR_OF_DAY]
         val hours = if (hour < 10)
             "0$hour" else "$hour"
         val minutes = if (calendar[Calendar.MINUTE] < 10)
