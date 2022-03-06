@@ -1,11 +1,10 @@
-package com.example.myandroidrepo2.ui.activity
+package com.example.myandroidrepo2.presentation.ui.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.ActivityMainBinding
-import com.example.myandroidrepo2.ui.fragment.MainFragment
-import java.util.*
+import com.example.myandroidrepo2.presentation.ui.fragment.MainFragment
 
 class MainActivity : AppCompatActivity() {
 

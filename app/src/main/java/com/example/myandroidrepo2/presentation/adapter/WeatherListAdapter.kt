@@ -1,4 +1,4 @@
-package com.example.myandroidrepo2.adapter
+package com.example.myandroidrepo2.presentation.adapter
 
 import android.graphics.PorterDuff
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.OneCityViewBinding
-import com.example.myandroidrepo2.entity.WeatherDetail
-import com.example.myandroidrepo2.entity.WeatherListModel
+import com.example.myandroidrepo2.domain.WeatherDetail
+import com.example.myandroidrepo2.data.api.entity.WeatherListModel
 
 class WeatherListAdapter(
     allWeather: WeatherListModel

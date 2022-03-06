@@ -1,8 +1,7 @@
-package com.example.myandroidrepo2.ui.fragment
+package com.example.myandroidrepo2.presentation.ui.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.PorterDuff
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -10,17 +9,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentMainBinding
-import com.example.myandroidrepo2.entity.WeatherDetail
-import com.example.myandroidrepo2.retrofit.repository.WeatherRepository
+import com.example.myandroidrepo2.domain.WeatherDetail
+import com.example.myandroidrepo2.data.WeatherRepositoryImpl
+import com.example.myandroidrepo2.di.DIContainer
+import com.example.myandroidrepo2.domain.usecase.GetWeatherListUseCase
+import com.example.myandroidrepo2.domain.usecase.GetWeatherUseCase
+import com.example.myandroidrepo2.domain.usecase.GetWeatherWithLocationUseCase
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
@@ -32,35 +33,42 @@ class MainFragment(private var city: String?) : Fragment() {
     private lateinit var locationClient: FusedLocationProviderClient
     private var longitude: Double? = null
     private var latitude: Double? = null
-    private var idBackground: Int? = null
     private val repository by lazy {
-        WeatherRepository()
+        WeatherRepositoryImpl(DIContainer.api)
     }
+    private lateinit var getWeatherUseCase: GetWeatherUseCase
+    private lateinit var getWeatherWithLocationUseCase: GetWeatherWithLocationUseCase
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(layoutInflater)
+        initCases()
         return binding?.root
+    }
+
+    private fun initCases() {
+        getWeatherUseCase = GetWeatherUseCase(repository)
+        getWeatherWithLocationUseCase = GetWeatherWithLocationUseCase(repository)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var weather: WeatherDetail?
         parentFragmentManager.beginTransaction()
-            .add(R.id.container, LoadingFragment(idBackground))
+            .add(R.id.container, LoadingFragment())
             .addToBackStack(null)
             .commit()
         setupLocation()
         lifecycleScope.launch {
             weather = if (city != null) {
-                repository.getWeather(city.toString())
+               getWeatherUseCase(city.toString())
             } else {
                 if (longitude == null) {
                     city = "Kazan"
-                    repository.getWeather("Kazan")
-                } else repository.getWeatherWithLocation(longitude, latitude)
+                    getWeatherUseCase("Kazan")
+                } else getWeatherWithLocationUseCase(longitude, latitude)
             }
             setupWeatherDetails(weather)
         }
@@ -68,7 +76,7 @@ class MainFragment(private var city: String?) : Fragment() {
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.container,
-                    SearchCityFragment(longitude, latitude, idBackground, repository)
+                    SearchCityFragment(longitude, latitude, repository)
                 )
                 .addToBackStack(null)
                 .commit()

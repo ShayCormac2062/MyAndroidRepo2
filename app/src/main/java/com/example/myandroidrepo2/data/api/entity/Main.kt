@@ -1,4 +1,4 @@
-package com.example.myandroidrepo2.entity
+package com.example.myandroidrepo2.data.api.entity
 
 import com.google.gson.annotations.SerializedName
 
