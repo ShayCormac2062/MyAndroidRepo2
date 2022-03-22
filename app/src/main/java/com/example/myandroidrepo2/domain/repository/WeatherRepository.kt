@@ -1,7 +1,7 @@
 package com.example.myandroidrepo2.domain.repository
 
 import com.example.myandroidrepo2.domain.WeatherDetail
-import com.example.myandroidrepo2.data.api.entity.WeatherListModel
+import com.example.myandroidrepo2.domain.WeatherListModel
 
 interface WeatherRepository {
 

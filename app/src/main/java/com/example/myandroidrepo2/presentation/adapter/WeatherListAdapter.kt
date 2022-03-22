@@ -10,34 +10,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.OneCityViewBinding
 import com.example.myandroidrepo2.domain.WeatherDetail
-import com.example.myandroidrepo2.data.api.entity.WeatherListModel
+import com.example.myandroidrepo2.domain.WeatherListModel
 
 class WeatherListAdapter(
-    allWeather: WeatherListModel
-) :
-    RecyclerView.Adapter<WeatherListAdapter.WeatherListViewHolder>() {
+    allWeather: WeatherListModel?
+) : RecyclerView.Adapter<WeatherListAdapter.WeatherListViewHolder>() {
 
     var onClick: ((String) -> (Unit))? = null
-    private val weatherList: List<WeatherDetail> = allWeather.list
+    private val weatherList: List<WeatherDetail>? = allWeather?.list
 
     inner class WeatherListViewHolder(
         private val binding: OneCityViewBinding
     ) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: WeatherDetail) = with(binding) {
+        fun bind(item: WeatherDetail?) = with(binding) {
             cardCity.setCardBackgroundColor(R.drawable.gradient_night)
-            rvItemWeatherCardTown.text = item.name
+            rvItemWeatherCardTown.text = item?.name
             with(cardCity) {
                 setOnClickListener {
                     it.alpha = 0.5F
-                    onClick?.invoke(item.name)
+                    onClick?.invoke(item?.name.toString())
                 }
             }
-            rvItemWeatherCardTemp.text = "${item.main.temp.toInt()}°C"
-            setupGradusnik(item.main.temp.toInt(), rvItemWeatherCardThermo, cardCity)
-            setupAir(item.wind.speed.toInt(), binding.rvItemWeatherCardAir, cardCity)
+            rvItemWeatherCardTemp.text = "${item?.main?.temp?.toInt() ?: 0}°C"
+            setupGradusnik(item?.main?.temp?.toInt() ?: 0, rvItemWeatherCardThermo, cardCity)
+            setupAir(item?.wind?.speed?.toInt() ?:  0, binding.rvItemWeatherCardAir, cardCity)
             setupRain(
-                if (item.main.humidity > 20) true else null,
-                if (item.clouds.all > 0) true else null,
+                if (item?.main?.humidity ?: 0 > 20) true else null,
+                if (item?.clouds?.all ?: 0 > 0) true else null,
                 binding.rvItemWeatherCardUmbrella,
                 cardCity
             )
@@ -108,8 +107,8 @@ class WeatherListAdapter(
         )
 
     override fun onBindViewHolder(holder: WeatherListViewHolder, position: Int) =
-        holder.bind(weatherList[position])
+        holder.bind(weatherList?.get(position))
 
-    override fun getItemCount(): Int = weatherList.size
+    override fun getItemCount(): Int = weatherList?.size ?: 0
 
 }

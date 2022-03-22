@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+        <variable
+            name="weather"
+            type="com.example.myandroidrepo2.domain.WeatherDetail" />
+    </data>
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -24,6 +32,7 @@
                 android:id="@+id/tv_city"
                 style="@style/TextStyle.TextStyleForTitles"
                 android:layout_width="match_parent"
+                android:text="@{weather.component7()}"
                 android:layout_height="wrap_content"
                 android:textSize="35sp"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -62,6 +71,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="90sp"
                 android:layout_marginTop="0dp"
+                android:text="@{Double.toString(weather.component6().component4())}"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
@@ -73,8 +83,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/min_temp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_min_temp_amount"
+                app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_temperature" />
+
+            <TextView
+                android:id="@+id/tv_min_temp_amount"
+                style="@style/TextStyle.ExtensionTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{Double.toString(weather.component6().component6())}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_min_temp"
                 app:layout_constraintTop_toBottomOf="@+id/tv_temperature" />
 
             <TextView
@@ -83,8 +104,19 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/max_temp"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintEnd_toStartOf="@id/tv_max_temp_amount"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_min_temp" />
+
+            <TextView
+                android:id="@+id/tv_max_temp_amount"
+                style="@style/TextStyle.ExtensionTextStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{Double.toString(weather.component6().component5())}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/tv_max_temp"
                 app:layout_constraintTop_toBottomOf="@+id/tv_min_temp" />
 
             <TextView
@@ -164,6 +196,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
+                android:text="@{Double.toString(weather.component14().component2())}"
                 app:layout_constraintEnd_toEndOf="@+id/tv_wind"
                 app:layout_constraintStart_toStartOf="@+id/tv_wind"
                 app:layout_constraintTop_toBottomOf="@+id/tv_wind" />
@@ -174,6 +207,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="15sp"
+                android:text="@{String.valueOf(weather.component6().component2())}"
                 app:layout_constraintEnd_toEndOf="@+id/tv_humidity"
                 app:layout_constraintStart_toStartOf="@+id/tv_humidity"
                 app:layout_constraintTop_toBottomOf="@+id/tv_wind" />
@@ -183,6 +217,7 @@
                 style="@style/TextStyle.ExtensionTextStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="@{String.valueOf(weather.component6().component3())}"
                 app:layout_constraintEnd_toEndOf="@+id/tv_pressure"
                 android:textSize="15sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_pressure"
@@ -232,6 +267,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="54dp"
+                        android:text="@{String.valueOf(weather.clouds.all)}"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toEndOf="@+id/tv_clouds"
                         app:layout_constraintTop_toBottomOf="@+id/tv_extensions" />
@@ -310,3 +346,5 @@
     </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>

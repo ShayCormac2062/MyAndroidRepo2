@@ -1,4 +1,4 @@
-package com.example.myandroidrepo2.di
+package com.example.myandroidrepo2.data.di
 
 import com.example.myandroidrepo2.data.api.APIService
 import okhttp3.Interceptor
