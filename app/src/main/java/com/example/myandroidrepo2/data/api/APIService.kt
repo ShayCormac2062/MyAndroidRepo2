@@ -1,8 +1,7 @@
-package com.example.myandroidrepo2.retrofit
+package com.example.myandroidrepo2.data.api
 
-import com.example.myandroidrepo2.entity.WeatherDetail
-import com.example.myandroidrepo2.entity.WeatherListModel
-import retrofit2.Call
+import com.example.myandroidrepo2.domain.WeatherDetail
+import com.example.myandroidrepo2.domain.WeatherListModel
 import retrofit2.http.GET
 import retrofit2.http.Query
 

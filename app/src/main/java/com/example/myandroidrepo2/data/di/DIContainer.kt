@@ -1,12 +1,12 @@
-package com.example.myandroidrepo2.retrofit.repository
+package com.example.myandroidrepo2.data.di
 
-import com.example.myandroidrepo2.retrofit.APIService
+import com.example.myandroidrepo2.data.api.APIService
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class WeatherRepository {
+object DIContainer {
 
     private val PARCE_ROOT = "https://api.openweathermap.org/data/2.5/"
     private val API_KEY = "56fc6c6cb76c0864b4cd055080568268"
@@ -35,11 +35,8 @@ class WeatherRepository {
             .build()
     }
 
-    private val api: APIService by lazy {
+    val api: APIService by lazy {
         retrofit.create(APIService::class.java)
     }
 
-    suspend fun getWeather(city: String) = api.getWeather(city)
-    suspend fun getWeatherWithLocation(lon: Double?, lat: Double?) = api.getWeatherWithCoordinates(lon, lat)
-    suspend fun getWeatherList(lon: Double?, lat: Double?, count: Int) = api.getWeatherList(lon, lat, count)
 }
