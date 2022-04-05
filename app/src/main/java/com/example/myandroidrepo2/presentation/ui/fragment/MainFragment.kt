@@ -12,17 +12,20 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.example.myandroidrepo2.App
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentMainBinding
 import com.example.myandroidrepo2.domain.WeatherDetail
-import com.example.myandroidrepo2.presentation.ui.activity.MainActivity
 import com.example.myandroidrepo2.presentation.viewmodel.WeatherViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
 class MainFragment(private var city: String?) : Fragment() {
 
@@ -30,16 +33,23 @@ class MainFragment(private var city: String?) : Fragment() {
     private lateinit var locationClient: FusedLocationProviderClient
     private var longitude: Double? = null
     private var latitude: Double? = null
-    private lateinit var viewModel: WeatherViewModel
-    private lateinit var weather: WeatherDetail
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private val viewModel: WeatherViewModel by viewModels {
+        factory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.appComponent.inject(this)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(layoutInflater)
-        viewModel = (requireActivity() as MainActivity).viewModel
-        startLoading()
         initObservers()
         return binding?.root
     }
@@ -51,6 +61,29 @@ class MainFragment(private var city: String?) : Fragment() {
             .addToBackStack(null)
             .commit()
         setupLocation()
+        var weather: WeatherDetail? = null
+        lifecycleScope.launch {
+            weather = if (city != null) {
+                with(viewModel) {
+                    getWeatherForCity(city.toString())
+                    weather
+                }
+            } else {
+                if (longitude == null) {
+                    city = "Kazan"
+                    with(viewModel) {
+                        getWeatherForCity(city.toString())
+                        weather
+                    }
+                } else {
+                    with(viewModel) {
+                        getWeatherWithLocation(longitude, latitude)
+                        weather
+                    }
+                }
+            }
+            setupWeatherDetails(weather)
+        }
         binding?.btnSearchCity?.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(
@@ -72,7 +105,7 @@ class MainFragment(private var city: String?) : Fragment() {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     setupLocation()
                 } else {
-                    Toast.makeText(context, getString(R.string.message_location_deny), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Доступ к локации запрещён", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -83,24 +116,9 @@ class MainFragment(private var city: String?) : Fragment() {
         binding = null
     }
 
-    private fun startLoading() {
-        lifecycleScope.launch {
-            if (city != null) {
-                viewModel.getWeatherForCity(city.toString())
-            } else {
-                if (longitude == null) {
-                    city = "Kazan"
-                    viewModel.getWeatherForCity(city.toString())
-                } else {
-                    viewModel.getWeatherWithLocation(longitude, latitude)
-                }
-            }
-        }
-    }
     private fun initObservers() {
         viewModel.weather.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = { wd ->
-                binding?.weather = wd
+            it?.fold(onSuccess = { wd ->
                 setupWeatherDetails(wd)
             }, onFailure = {
                 Log.e("asd", it.message.toString())
@@ -130,6 +148,15 @@ class MainFragment(private var city: String?) : Fragment() {
             binding?.run {
                 tvCalendar.text = "${calendar[Calendar.DAY_OF_MONTH]}, " +
                     "${setMonth(calendar[Calendar.MONTH])} ${calendar[Calendar.YEAR]}"
+                tvCity.text = city
+                tvTemperature.text = "${(detail.main.temp + 0.5).toInt()}°C"
+                tvDescription.text = detail.weather[0].description
+                tvMinTemp.text = "${getString(R.string.min_temp)} ${detail.main.tempMin}°C"
+                tvMaxTemp.text = "${getString(R.string.max_temp)} ${detail.main.tempMax}°C"
+                tvWindResult.text = "${detail.wind.speed} km/h"
+                tvHumidityResult.text = "${detail.main.humidity}%"
+                tvPressureResult.text = "${detail.main.pressure}mm"
+                tvCloudsResult.text = "${detail.clouds.all}%"
                 calendar.timeInMillis = detail.sys.sunrise.toLong()
                 tvSunriseResult.text = setHour(calendar, 0)
                 calendar.timeInMillis = detail.sys.sunset.toLong()

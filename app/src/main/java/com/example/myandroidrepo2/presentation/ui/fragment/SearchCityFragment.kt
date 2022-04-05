@@ -8,14 +8,17 @@ import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.myandroidrepo2.App
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentSearchCityBinding
 import com.example.myandroidrepo2.presentation.adapter.WeatherListAdapter
-import com.example.myandroidrepo2.presentation.ui.activity.MainActivity
 import com.example.myandroidrepo2.presentation.viewmodel.WeatherViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class SearchCityFragment(
     private var longitude: Double?,
@@ -23,14 +26,24 @@ class SearchCityFragment(
 ) : Fragment() {
 
     private var binding: FragmentSearchCityBinding? = null
-    private lateinit var viewModel: WeatherViewModel
+
+    @Inject
+    lateinit var factory: ViewModelProvider.Factory
+    private val viewModel: WeatherViewModel by viewModels {
+        factory
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        App.appComponent.inject(this)
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentSearchCityBinding.inflate(layoutInflater)
-        viewModel = (requireActivity() as MainActivity).viewModel
         initObservers()
         return binding?.root
     }
@@ -49,9 +62,9 @@ class SearchCityFragment(
 
     private fun initObservers() {
         viewModel.weather.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = { wd ->
+            it?.fold(onSuccess = { wd ->
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, MainFragment(wd.name))
+                    .replace(R.id.container, MainFragment(wd.sys.country))
                     .addToBackStack(null)
                     .commit()
             }, onFailure = {
@@ -59,7 +72,7 @@ class SearchCityFragment(
             })
         }
         viewModel.weatherList.observe(viewLifecycleOwner) {
-            it.fold(onSuccess = { wd ->
+            it?.fold(onSuccess = { wd ->
                 binding?.rvWeatherList?.apply {
                     adapter = WeatherListAdapter(wd).apply {
                         onClick = {
