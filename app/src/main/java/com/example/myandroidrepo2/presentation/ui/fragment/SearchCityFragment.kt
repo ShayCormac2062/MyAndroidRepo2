@@ -17,26 +17,18 @@ import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentSearchCityBinding
 import com.example.myandroidrepo2.presentation.adapter.WeatherListAdapter
 import com.example.myandroidrepo2.presentation.viewmodel.WeatherViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class SearchCityFragment(
     private var longitude: Double?,
     private var latitude: Double?,
 ) : Fragment() {
 
     private var binding: FragmentSearchCityBinding? = null
-
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
-    private val viewModel: WeatherViewModel by viewModels {
-        factory
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        App.appComponent.inject(this)
-    }
+    private val viewModel: WeatherViewModel by viewModels()
 
 
     override fun onCreateView(
@@ -64,7 +56,7 @@ class SearchCityFragment(
         viewModel.weather.observe(viewLifecycleOwner) {
             it?.fold(onSuccess = { wd ->
                 parentFragmentManager.beginTransaction()
-                    .replace(R.id.container, MainFragment(wd.sys.country))
+                    .replace(R.id.container, MainFragment(wd.name))
                     .addToBackStack(null)
                     .commit()
             }, onFailure = {

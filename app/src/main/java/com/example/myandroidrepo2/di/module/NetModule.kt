@@ -3,6 +3,8 @@ package com.example.myandroidrepo2.di.module
 import com.example.myandroidrepo2.data.api.APIService
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -10,6 +12,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 @Module
+@InstallIn(SingletonComponent::class)
 class NetModule {
 
     private val PARSE_ROOT = "https://api.openweathermap.org/data/2.5/"

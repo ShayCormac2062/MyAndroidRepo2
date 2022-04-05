@@ -11,8 +11,11 @@ import com.example.myandroidrepo2.domain.usecase.GetWeatherWithLocationUseCase
 import com.example.myandroidrepo2.utils.DispatcherProvider
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
 @Module
+@InstallIn(SingletonComponent::class)
 class AppModule {
 
     @Provides

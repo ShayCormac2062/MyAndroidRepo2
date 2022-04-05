@@ -23,27 +23,19 @@ import com.example.myandroidrepo2.domain.WeatherDetail
 import com.example.myandroidrepo2.presentation.viewmodel.WeatherViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainFragment(private var city: String?) : Fragment() {
 
     private var binding: FragmentMainBinding? = null
     private lateinit var locationClient: FusedLocationProviderClient
     private var longitude: Double? = null
     private var latitude: Double? = null
-
-    @Inject
-    lateinit var factory: ViewModelProvider.Factory
-    private val viewModel: WeatherViewModel by viewModels {
-        factory
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        App.appComponent.inject(this)
-    }
+    private val viewModel: WeatherViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -9,9 +9,11 @@ import com.example.myandroidrepo2.domain.WeatherDetail
 import com.example.myandroidrepo2.domain.usecase.GetWeatherListUseCase
 import com.example.myandroidrepo2.domain.usecase.GetWeatherUseCase
 import com.example.myandroidrepo2.domain.usecase.GetWeatherWithLocationUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class WeatherViewModel @Inject constructor(private val getWeatherUseCase: GetWeatherUseCase,
                        private val getWeatherWithLocationUseCase: GetWeatherWithLocationUseCase,
                        private val getWeatherListUseCase: GetWeatherListUseCase
