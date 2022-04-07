@@ -1,4 +1,4 @@
-package com.example.myandroidrepo2.entity
+package com.example.myandroidrepo2.data.api.entity
 
 data class Sys(
     val country: String,

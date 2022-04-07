@@ -1,8 +1,7 @@
-package com.example.myandroidrepo2.ui.fragment
+package com.example.myandroidrepo2.presentation.ui.fragment
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.PorterDuff
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
@@ -10,57 +9,70 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import coil.load
+import com.example.myandroidrepo2.App
 import com.example.myandroidrepo2.R
 import com.example.myandroidrepo2.databinding.FragmentMainBinding
-import com.example.myandroidrepo2.entity.WeatherDetail
-import com.example.myandroidrepo2.retrofit.repository.WeatherRepository
+import com.example.myandroidrepo2.domain.WeatherDetail
+import com.example.myandroidrepo2.presentation.viewmodel.WeatherViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MainFragment(private var city: String?) : Fragment() {
 
     private var binding: FragmentMainBinding? = null
     private lateinit var locationClient: FusedLocationProviderClient
     private var longitude: Double? = null
     private var latitude: Double? = null
-    private var idBackground: Int? = null
-    private val repository by lazy {
-        WeatherRepository()
-    }
+    private val viewModel: WeatherViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentMainBinding.inflate(layoutInflater)
+        initObservers()
         return binding?.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        var weather: WeatherDetail?
         parentFragmentManager.beginTransaction()
-            .add(R.id.container, LoadingFragment(idBackground))
+            .add(R.id.container, LoadingFragment())
             .addToBackStack(null)
             .commit()
         setupLocation()
+        var weather: WeatherDetail? = null
         lifecycleScope.launch {
             weather = if (city != null) {
-                repository.getWeather(city.toString())
+                with(viewModel) {
+                    getWeatherForCity(city.toString())
+                    weather
+                }
             } else {
                 if (longitude == null) {
                     city = "Kazan"
-                    repository.getWeather("Kazan")
-                } else repository.getWeatherWithLocation(longitude, latitude)
+                    with(viewModel) {
+                        getWeatherForCity(city.toString())
+                        weather
+                    }
+                } else {
+                    with(viewModel) {
+                        getWeatherWithLocation(longitude, latitude)
+                        weather
+                    }
+                }
             }
             setupWeatherDetails(weather)
         }
@@ -68,7 +80,7 @@ class MainFragment(private var city: String?) : Fragment() {
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.container,
-                    SearchCityFragment(longitude, latitude, idBackground, repository)
+                    SearchCityFragment(longitude, latitude)
                 )
                 .addToBackStack(null)
                 .commit()
@@ -96,6 +108,16 @@ class MainFragment(private var city: String?) : Fragment() {
         binding = null
     }
 
+    private fun initObservers() {
+        viewModel.weather.observe(viewLifecycleOwner) {
+            it?.fold(onSuccess = { wd ->
+                setupWeatherDetails(wd)
+            }, onFailure = {
+                Log.e("asd", it.message.toString())
+            })
+        }
+    }
+
     private fun setMonth(i: Int): String =
         when (i) {
             0 -> "Jan"
@@ -119,7 +141,7 @@ class MainFragment(private var city: String?) : Fragment() {
                 tvCalendar.text = "${calendar[Calendar.DAY_OF_MONTH]}, " +
                     "${setMonth(calendar[Calendar.MONTH])} ${calendar[Calendar.YEAR]}"
                 tvCity.text = city
-                tvTemperature.text = "${detail.main.temp.toInt()}°C"
+                tvTemperature.text = "${(detail.main.temp + 0.5).toInt()}°C"
                 tvDescription.text = detail.weather[0].description
                 tvMinTemp.text = "${getString(R.string.min_temp)} ${detail.main.tempMin}°C"
                 tvMaxTemp.text = "${getString(R.string.max_temp)} ${detail.main.tempMax}°C"
